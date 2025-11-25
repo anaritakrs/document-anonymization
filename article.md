@@ -1,0 +1,26 @@
+# Anonimização de Dados Sensíveis conforme LGPD com Serviços Azure
+
+A Lei Geral de Proteção de Dados (LGPD) estabelece padrões rigorosos para o tratamento de dados pessoais e sensíveis no Brasil. Dados pessoais incluem informações que identificam diretamente um indivíduo, como nome, endereço, telefone, CPF, RG e data de nascimento. Já os dados sensíveis abrangem categorias especiais, como origem racial ou étnica, crenças religiosas, opiniões políticas, dados de saúde ou genéticos, biometria, orientação sexual e filiação sindical. Esses dados exigem cuidados adicionais, pois impactam diretamente a privacidade e os direitos dos titulares.
+No contexto do processamento e compartilhamento de documentos — especialmente em setores como o público e o médico — é essencial reconhecer e classificar corretamente esses tipos de dados. Documentos oficiais ou registros de saúde frequentemente contêm tanto informações pessoais quanto dados altamente sensíveis, tornando a anonimização uma necessidade prática além de uma exigência legal.
+Para atender a essa demanda, soluções modernas de inteligência artificial, como Azure Document Intelligence e Azure Language Service, oferecem recursos para detectar e classificar automaticamente dados pessoais, facilitando o processo de anonimização. No entanto, os modelos padrão desses serviços podem não cobrir todas as categorias previstas pela LGPD, principalmente aquelas mais complexas ou dependentes de contexto, como opiniões políticas ou informações específicas de saúde.
+
+![Esquemática da arquitetura](C:/Users/anaritak/Projetos/serpro-fnde/arquitetura.png)
+
+Um exemplo prático é o projeto desenvolvido para a plataforma Sei, em conjunto com o FNDE (Fundo Nacional de Desenvolvimento da Educação), cujo objetivo foi anonimizar campos sensíveis em documentos, garantindo o compartilhamento seguro de informações públicas. Na primeira entrega, já em produção, a solução baseada em inteligência artificial conseguiu anonimizar cerca de 50% das classes previstas pela LGPD, atingindo aproximadamente 80% dos casos reais encontrados nos documentos, segundo feedback do próprio FNDE. Esse resultado demonstra que, mesmo com modelos genéricos, é possível atender grande parte das demandas de privacidade, mas também evidencia a necessidade de evoluir para garantir conformidade total.
+O próximo passo será ampliar a cobertura das classes LGPD por meio de modelos personalizados de Reconhecimento de Entidades Nomeadas (NER), também disponíveis no Azure Language Service, capazes de identificar entidades específicas do contexto do FNDE que os modelos genéricos não captam. Além disso, foram aplicados refinamentos com filtros para evitar mascaramento indevido, como nomes de organizações ou cargos específicos.
+Outro ponto relevante é a possibilidade de estender a anonimização para conteúdos multimídia. Serviços como Azure Computer Vision permitem identificar e ocultar características faciais em imagens e vídeos, reforçando ainda mais a proteção da privacidade — uma funcionalidade que pode ser incorporada em fases futuras da solução.
+A arquitetura técnica combina serviços de IA do Azure com lógica desenvolvida em Python. O Azure Document Intelligence foi utilizado para extrair texto e compreender a estrutura dos documentos, mesmo em layouts complexos, além de detectar códigos de barra e QR codes. Já o Azure Language Service realizou a detecção e classificação de informações pessoalmente identificáveis (PII), atendendo aos padrões exigidos pela LGPD. Para garantir a integridade dos documentos, foram aplicadas técnicas de redacionamento baseadas em coordenadas, desenvolvidas em Python, que mascaram informações sem comprometer o formato original. Veja o repositório de uma demonstração com arquivos fictícios: [Inserir link do repositório da demo aqui]
+Se você deseja implantar essa solução, pode utilizar o código disponível no repositório e adaptá-lo aos seus filtros e regras específicas. A estratégia recomendada é empacotar a aplicação em contêineres para facilitar a escalabilidade e a integração com diferentes ambientes. Além disso, é possível consumir os serviços do Azure diretamente via APIs, garantindo flexibilidade na arquitetura e integração com outras aplicações. Todas essas informações, incluindo exemplos e orientações detalhadas, estão disponíveis na documentação oficial dos serviços Azure.
+Essa abordagem integrada garante que documentos públicos possam ser compartilhados de forma segura, respeitando a legislação e protegendo a privacidade dos cidadãos. A evolução para modelos personalizados representa um salto importante, permitindo identificar e anonimizar dados que hoje passam despercebidos pelos modelos padrão, elevando o nível de conformidade e confiança no tratamento de dados sensíveis.
+
+Referências dos Serviços Azure
+
+    • https://learn.microsoft.com/azure/ai-services/document-intelligence/
+
+    • https://learn.microsoft.com/azure/ai-services/language-service/
+
+    • https://learn.microsoft.com/azure/ai-services/language-service/named-entity-recognition/
+
+    • https://learn.microsoft.com/azure/cognitive-services/computer-vision/
+
+Agradecimento especial ao Gilberto Santos pelo apoio no desenvolvimento deste projeto.
