@@ -9,7 +9,9 @@ This process automatically finds and hides personal information in PDF documents
 ## How It Works
 
 ### **Setup**
+
 The system needs Azure credentials to work:
+
 ```python
 # Put these in your k.env file
 AZURE_DOCINT_ENDPOINT=your-azure-endpoint
@@ -17,15 +19,17 @@ AZURE_DOCINT_KEY=your-azure-key
 ```
 
 ### **What Gets Protected (NOT Hidden)**
+
 The system is smart about what to keep visible:
 
 - **Organizations**: Client's organization name and others related names
-- **Roles**: eg. "Solicitante" 
+- **Roles**: eg. "Solicitante"
 - **Legal References**: eg. "Portaria 123", "Portaria GM/MEC 456"
 - **Document Dates**: All dates except birth dates
 - **Most URLs**: Except specific internal links
 
 ### **What Gets Hidden**
+
 - Names and addresses
 - Phone numbers and emails  
 - ID numbers (CPF, RG, etc.)
@@ -38,6 +42,7 @@ Microsoft model in use: Detect PII - 2025-08-01-preview
 ## Main Components
 
 ### **Data Classes**
+
 Simple containers for information:
 
 ```python
@@ -56,6 +61,7 @@ class EntityPII:
 ### **Processing Steps**
 
 #### **Step 1: PDF to Images**
+
 ```python
 def pdf_to_images(pdf_path):
     # Converts each PDF page into a PNG image
@@ -63,6 +69,7 @@ def pdf_to_images(pdf_path):
 ```
 
 #### **Step 2: Read Text (OCR)**
+
 ```python  
 def ocr_image_docint(image_path):
     # Uses Azure to read all text from image
@@ -70,13 +77,16 @@ def ocr_image_docint(image_path):
 ```
 
 #### **Step 3: Smart Text Processing**
+
 The system automatically chooses the best way to process text:
+
 - **Small documents**: Process all at once
 - **Medium documents**: Break into chunks  
 - **Large documents**: Use smaller chunks
 - **Very large**: Emergency small chunks
 
 #### **Step 4: Find Personal Information**
+
 ```python
 def detect_pii_with_chunking(text):
     # Uses Azure AI to find personal information
@@ -84,6 +94,7 @@ def detect_pii_with_chunking(text):
 ```
 
 #### **Step 5: Apply Protection Rules**
+
 ```python
 def filter_allowed_entities(entities):
     # Decides what to hide vs. what to keep
@@ -91,6 +102,7 @@ def filter_allowed_entities(entities):
 ```
 
 #### **Step 6: Hide Sensitive Information**
+
 ```python
 def apply_redactions_simple(image, redactions):
     # Draws black rectangles over sensitive text
@@ -100,6 +112,7 @@ def apply_redactions_simple(image, redactions):
 ## Protection Rules
 
 ### **Organization Protection**
+
 ```python
 def is_allowed_organization(text):
     # Keeps client's name and related organizations visible
@@ -107,6 +120,7 @@ def is_allowed_organization(text):
 ```
 
 ### **Legal Document Protection**  
+
 ```python
 def extract_portaria_words(text):
     # Automatically finds "Portaria" + numbers/codes
@@ -114,18 +128,22 @@ def extract_portaria_words(text):
 ```
 
 ### **Date Protection**
+
 - **Keep Visible**: Document dates, timestamps
 - **Hide**: Birth dates only
 
 ### **URL Protection**
+
 - **Keep Visible**: Most websites and links
 - **Hide**: Internal system URLs only
 
 ## How to Use
 
 ### **1. Setup Environment**
+
 Create a file called `k.env`:
-```
+
+```python
 AZURE_DOCINT_ENDPOINT=https://your-service.cognitiveservices.azure.com/
 AZURE_DOCINT_KEY=your-key-here
 AZURE_LANGUAGE_ENDPOINT=https://your-service.cognitiveservices.azure.com/
@@ -133,6 +151,7 @@ AZURE_LANGUAGE_KEY=your-key-here
 ```
 
 ### **2. Run the System**
+
 ```python
 # Put your PDF in the 'data' folder
 PDF_FILE = 'your-document.pdf'
@@ -146,6 +165,7 @@ if results['success']:
 ```
 
 ### **3. What You Get**
+
 - **Protected PDF**: Original document with sensitive info hidden
 - **Statistics**: Shows what was found and what was protected
 - **Logs**: Step-by-step progress information
@@ -153,16 +173,19 @@ if results['success']:
 ## Easy Customization
 
 ### **Add New Protected Organizations**
+
 ```python
 ALLOWED_ORGANIZATIONS.append('Your Organization Name')
 ```
 
 ### **Add New Protected Roles**
+
 ```python
 ALLOWED_PERSONS.append('New Role Title')
 ```
 
 ### **Adjust Processing Speed**
+
 ```python
 TEXT_SIZE_THRESHOLDS = {
     'single_call_max': 5000,  # Increase for faster processing
@@ -173,21 +196,21 @@ TEXT_SIZE_THRESHOLDS = {
 ## What the Output Tells You
 
 When processing finishes, you get:
+
 - **Total pages processed**: How many pages were handled
 - **Entities found**: How much personal info was detected
 - **Entities protected**: How much important info was preserved  
 - **Processing method**: Which strategy was used for each page
 
 Example output:
-```
 ✅ Page 1: 15 total entities found, 3 allowed (not redacted), 12 to redact
 📊 TEXT PROCESSING: 8 pages single call, 2 pages chunked
 🛡️ PROTECTED: 5 FNDE references, 2 Portaria references, 8 dates
-```
 
 ## Summary
 
 This proccessing:
+
 1. **Automatically** finds personal information in PDFs
 2. **Intelligently** protects important organizational info  
 3. **Safely** hides sensitive personal details
